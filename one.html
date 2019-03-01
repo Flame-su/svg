@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>SVG Draw Arc</title>
+  <style media="screen">
+    .svgs{display: flex; flex-flow:row wrap; justify-content: space-around; width: 620px; margin: 0 auto;}
+    .svgs svg{width:450px; height:450px; background: #F2F2F2; margin-bottom: 10px;}
+    #path{
+      z-index: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="svgs">
+  <svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="150" r="2" fill="red"/>
+    <path d="M 150 0 L 150 200 M 0 100 L 300 100" stroke="#CCC" stroke-width="1" />
+    <path id="path1" d="" stroke="red" fill="red" fill-opacity="0" stroke-width="1rem" />
+    <path id="path2" d="" stroke="pink" fill="red" fill-opacity="0" stroke-width="1rem" />
+    <!-- <path id="path2" d="M 150 50 A 50 50 0 0 100 100 " stroke="#000" fill="＃fff" fill-opacity="0" stroke-width="10"/> -->
+    <path id="path3" d="M 225 10 A 215 215 0 0 1 439.999999999996 224.99995882076388" stroke="#000" fill="pink" fill-opacity="0" stroke-width="10"/>
+    <path id="path4" d="M 439.999999999996 224.99995882076388 A 215 215 0 0 1 225.00008235847224 439.9999999999842" stroke="#000" fill="blue" fill-opacity="0" stroke-width="10"/>
+  </svg>
+</div>
+</body>
+<script type="text/javascript">
+//A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+  //A  rx ,ry  水平垂直方向上的半径,
+  // x-axis-rotation 这个参数用于设置弧线X轴方向上的旋转。通常不需要改变这个参数，它的默认值为0。
+  //large-arc-flag决定弧线是大于还是小于180度，0表示小角度弧，1表示大角度弧
+  //sweep-flag表示弧线的方向，0表示从起点到终点沿逆时针画弧，1表示从起点到终点沿顺时针画弧
+  //圆上每个点的X坐标=a + Math.sin(2*Math.PI / 360) * r ；Y坐标=b + Math.cos(2*Math.PI / 360) * r ；
+  function changeArcDeg(path, d){
+    path.setAttribute("d", d);
+  }
+  function drawArcByRadiusDeg(startX, startY, r, deg, clockwise) {
+    var cw = typeof clockwise !== 'undefined' ? clockwise : 1;
+    var x = startX - r + r*Math.cos(deg*Math.PI/180);
+    var y = startY + (1===cw ? 1 : -1)*r*Math.sin(deg*Math.PI/180);
+    var bigOrSmall = deg > 180 ? 1 : 0;
+    var line = " L" + (startX - r) + " " + startY + " L"+startX + " " + startY + "Z";
+    return "M " + startX +" "+ startY + " A "+ r +" " + r + " 0 " + bigOrSmall + " " +cw+ " " + x + " " + y ;
+  }
+  function run(pid, deg, clockwise){
+    var path = document.getElementById(pid);
+    var x = 200, y = 100, r = 50, add = 0===deg ? true : false;
+    setInterval(function(){
+      if(deg>360) deg -= 360;
+      if(deg<0) deg += 360;
+    }, 10);
+    path.setAttribute("d", drawArcByRadiusDeg(x, y, r, add ? deg++ : deg--, clockwise)) ;
+  }
+  window.onload = function(){
+    run('path1', 359, 1);
+    run('path2', 230, 1);
+    run('path3', 20, 1);
+  };
+  
+  function fns() {
+    
+  }
+</script>
+</html>
